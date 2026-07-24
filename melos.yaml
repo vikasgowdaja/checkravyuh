@@ -1,0 +1,16 @@
+name: checkravyuh
+
+packages:
+  - apps/mobile
+  - packages/**
+
+scripts:
+  bootstrap:
+    run: melos bootstrap
+    description: Install Flutter and Dart dependencies across the workspace.
+  analyze:
+    run: melos exec -- flutter analyze
+    description: Run static analysis for all Flutter and Dart packages.
+  test:
+    run: melos exec -- flutter test
+    description: Run tests for all Flutter and Dart packages.

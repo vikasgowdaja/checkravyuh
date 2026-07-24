@@ -1,0 +1,32 @@
+# Flutter and Dart
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+build/
+pubspec.lock
+
+# Node
+node_modules/
+dist/
+coverage/
+
+# Environment and secrets
+.env
+.env.*
+!.env.example
+
+# IDE and OS
+.idea/
+.vscode/settings.json
+*.iml
+Thumbs.db
+.DS_Store
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+
+# Logs
+*.log

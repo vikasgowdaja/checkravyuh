@@ -1,0 +1,32 @@
+id: blackburne_shilling
+version: 1
+opening:
+  id: italian_game
+  name: Italian Game
+  eco: C50
+difficulty: intermediate
+rating_band:
+  min: 600
+  max: 1800
+moves:
+  - e4
+  - e5
+  - Nf3
+  - Nc6
+  - Bc4
+  - Nd4
+solution:
+  move: Nxd4
+hint: Look for the direct refutation before chasing side tactics.
+explanation: White neutralizes the idea immediately by removing the advanced knight before Black can create tactical pressure.
+scenarios:
+  - id: main_line
+    fen: r1bqkbnr/pppp1ppp/2n5/4p3/2BPP3/5N2/PPPP1PPP/RNBQK2R b KQkq - 0 3
+    correct_move: Nd4
+    wrong_moves:
+      - Bc5
+      - Nf6
+tags:
+  - italian
+  - opening-trap
+  - tactical-refutation

@@ -1,0 +1,26 @@
+{
+  "name": "checkravyuh",
+  "private": true,
+  "workspaces": [
+    "apps/api",
+    "apps/web",
+    "apps/admin"
+  ],
+  "engines": {
+    "node": ">=20.0.0",
+    "npm": ">=10.0.0"
+  },
+  "scripts": {
+    "bootstrap:js": "npm install --workspaces",
+    "validate:scaffold": "node scripts/validate-scaffold.mjs",
+    "api:dev": "npm --workspace apps/api run start:dev",
+    "api:lint": "npm --workspace apps/api run lint",
+    "api:test": "npm --workspace apps/api run test",
+    "web:dev": "npm --workspace apps/web run dev",
+    "web:build": "npm --workspace apps/web run build",
+    "admin:dev": "npm --workspace apps/admin run dev",
+    "admin:lint": "npm --workspace apps/admin run lint",
+    "admin:test": "npm --workspace apps/admin run test",
+    "admin:build": "npm --workspace apps/admin run build"
+  }
+}

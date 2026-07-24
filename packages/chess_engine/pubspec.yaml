@@ -1,0 +1,7 @@
+name: chess_engine
+description: Chess notation and validation primitives for Checkravyuh.
+version: 0.1.0
+publish_to: none
+
+environment:
+  sdk: ^3.5.0

@@ -1,0 +1,13 @@
+name: api_client
+description: API client bindings for Checkravyuh mobile.
+version: 0.1.0
+publish_to: none
+
+environment:
+  sdk: ^3.5.0
+
+dependencies:
+  dio: ^5.7.0
+  json_annotation: ^4.9.0
+  shared_models:
+    path: ../shared_models
