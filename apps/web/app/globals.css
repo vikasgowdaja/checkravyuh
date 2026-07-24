@@ -126,109 +126,180 @@ body {
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
 }
 
-.catalog-layout {
-  display: grid;
-  gap: 20px;
-  grid-template-columns: minmax(250px, 300px) minmax(0, 1fr);
-  align-items: start;
+/* ─── Traps page: Lichess-inspired board-first layout ─── */
+
+.traps-page {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 0 24px 72px;
 }
 
-.catalog-sidebar {
-  position: sticky;
-  top: 96px;
-  display: grid;
-  gap: 18px;
-  align-self: start;
+.traps-error {
+  padding: 14px 18px;
+  border-radius: 14px;
+  background: #f8e1db;
+  color: #702d22;
+  margin-bottom: 16px;
 }
 
-.catalog-sidebar-title {
-  font-size: 2rem;
-  margin: -4px 0 0;
+.traps-loading {
+  padding: 24px;
+  color: var(--muted);
 }
 
-.catalog-sidebar-copy {
-  line-height: 1.6;
-  margin: 0;
-}
-
-.catalog-sidebar-groups,
-.catalog-sidebar-list,
-.catalog-main {
-  display: grid;
-}
-
-.catalog-sidebar-groups,
-.catalog-main {
-  gap: 20px;
-}
-
-.catalog-sidebar-group {
-  display: grid;
-  gap: 12px;
-}
-
-.catalog-sidebar-group-header {
+.trap-toolbar {
   display: flex;
+  align-items: center;
   justify-content: space-between;
-  align-items: center;
+  gap: 16px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.trap-toolbar-info {
+  display: flex;
+  align-items: baseline;
   gap: 12px;
+  flex-wrap: wrap;
 }
 
-.catalog-sidebar-count {
-  min-width: 32px;
-  height: 32px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 999px;
-  background: rgba(255, 250, 242, 0.92);
-  border: 1px solid var(--line);
-  font-weight: 700;
+.trap-toolbar-info strong {
+  font-size: 1.2rem;
 }
 
-.catalog-sidebar-list {
+.trap-toolbar-meta {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.trap-toolbar-actions {
+  display: flex;
   gap: 8px;
 }
 
-.catalog-sidebar-item {
-  width: 100%;
+.traps-layout {
+  display: grid;
+  grid-template-columns: 260px minmax(0, 1fr);
+  gap: 24px;
+  align-items: start;
+}
+
+.traps-nav {
+  position: sticky;
+  top: 90px;
+  max-height: calc(100vh - 110px);
+  overflow-y: auto;
+  display: grid;
+  gap: 20px;
+  padding: 4px 0;
+}
+
+.traps-nav-group {
+  display: grid;
+  gap: 4px;
+}
+
+.traps-nav-group-title {
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  padding: 6px 12px;
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 4px;
+}
+
+.traps-nav-item {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 14px;
+  gap: 10px;
+  width: 100%;
   text-align: left;
-  padding: 12px 14px;
-  border-radius: 14px;
-  border: 1px solid transparent;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: none;
   background: transparent;
   color: inherit;
   cursor: pointer;
+  font-size: 0.92rem;
 }
 
-.catalog-sidebar-item:hover {
+.traps-nav-item:hover {
   background: rgba(255, 250, 242, 0.7);
-  border-color: var(--line);
 }
 
-.catalog-sidebar-item.active {
-  background: rgba(217, 123, 45, 0.14);
-  border-color: rgba(217, 123, 45, 0.38);
-  box-shadow: 0 8px 18px rgba(217, 123, 45, 0.12);
-}
-
-.catalog-sidebar-item-title {
-  display: block;
+.traps-nav-item.active {
+  background: rgba(217, 123, 45, 0.12);
   font-weight: 700;
 }
 
-.catalog-sidebar-item-meta {
-  color: var(--muted);
-  font-size: 0.86rem;
-  text-transform: capitalize;
+.traps-nav-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent);
+  flex-shrink: 0;
 }
 
-.catalog-overview {
-  min-height: 220px;
+.traps-workspace {
+  min-width: 0;
+}
+
+/* Cap board size inside traps page so it's fully visible at 100% zoom */
+.traps-workspace .board-panel {
+  max-width: min(100%, 560px);
+}
+
+/* Override GuidedTrainer grid inside traps workspace: board bigger, sidebar narrower */
+.traps-workspace .practice-layout {
+  grid-template-columns: minmax(360px, 560px) 300px;
+}
+
+/* ─── Below-board trap details ─── */
+
+.trap-details {
+  margin-top: 40px;
+  padding-top: 32px;
+  border-top: 1px solid var(--line);
+}
+
+.trap-details-header {
+  margin-bottom: 24px;
+}
+
+.trap-details-title {
+  font-size: 1.8rem;
+  margin: 8px 0 6px;
+}
+
+.trap-details-meta {
+  color: var(--muted);
+  margin: 0;
+}
+
+.trap-details-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.trap-details-section {
+  line-height: 1.7;
+}
+
+.trap-details-section p {
+  margin: 8px 0 0;
+  color: var(--muted);
+}
+
+.trap-details-section ul {
+  margin: 8px 0 0;
+  padding-left: 18px;
+  color: var(--muted);
 }
 
 .practice-layout {
@@ -543,13 +614,23 @@ body {
 @media (max-width: 920px) {
   .hero-grid,
   .split-grid,
-  .catalog-layout,
+  .traps-layout,
   .practice-layout {
     grid-template-columns: 1fr;
   }
 
-  .catalog-sidebar {
+  .traps-nav {
     position: static;
+    max-height: none;
+  }
+
+  .traps-workspace .practice-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .trap-toolbar {
+    flex-direction: column;
+    align-items: flex-start;
   }
 
   .site-header__inner {

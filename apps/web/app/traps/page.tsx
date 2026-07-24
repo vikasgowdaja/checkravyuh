@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import Link from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
@@ -41,11 +41,6 @@ export default function TrapsPage() {
   }, [openings, traps]);
 
   const flatTraps = useMemo(() => trapGroups.flatMap((opening) => opening.traps), [trapGroups]);
-
-  const selectedTrapSummary = useMemo(
-    () => flatTraps.find((trap) => trap.id === selectedTrapId) ?? null,
-    [flatTraps, selectedTrapId]
-  );
 
   useEffect(() => {
     let isMounted = true;
@@ -149,7 +144,7 @@ export default function TrapsPage() {
           return;
         }
 
-        setTrainingError(loadError instanceof Error ? loadError.message : 'Unable to load hands-on training.');
+        setTrainingError(loadError instanceof Error ? loadError.message : 'Unable to load training.');
       }
     }
 
@@ -161,193 +156,136 @@ export default function TrapsPage() {
   }, [selectedTrapId]);
 
   return (
-    <main className="page-container">
+    <main className="traps-page">
       {catalogError ? (
-        <section className="panel-card" style={{ background: '#f8e1db', color: '#702d22' }}>
-          {catalogError}
-        </section>
+        <div className="traps-error">{catalogError}</div>
       ) : null}
 
-      <section className="catalog-layout" style={{ marginTop: catalogError ? 24 : 0 }}>
-        <aside className="catalog-sidebar panel-card">
-          <div className="eyebrow">Trap options</div>
-          <h1 className="catalog-sidebar-title">Traps</h1>
-          <p className="muted-copy catalog-sidebar-copy">
-            Simple access on the left. Pick one trap and work with its details and hands-on space on the right.
-          </p>
-          <div className="pill-row" style={{ marginTop: 16 }}>
-            <span className="soft-pill">{traps.length} traps</span>
-            <span className="soft-pill">{trapGroups.length} openings</span>
+      {/* Trap toolbar - thin, always visible */}
+      {selectedTrap ? (
+        <div className="trap-toolbar">
+          <div className="trap-toolbar-info">
+            <strong>{selectedTrap.title}</strong>
+            <span className="trap-toolbar-meta">
+              {selectedTrap.opening.name} &middot; {selectedTrap.difficulty} &middot; {selectedTrap.estimatedMinutes} min
+            </span>
           </div>
-
-          <div className="catalog-sidebar-groups">
-            {trapGroups.map((opening) => (
-              <section key={opening.id} className="catalog-sidebar-group">
-                <div className="catalog-sidebar-group-header">
-                  <div>
-                    <div className="eyebrow">{opening.eco}</div>
-                    <strong>{opening.name}</strong>
-                  </div>
-                  <span className="catalog-sidebar-count">{opening.traps.length}</span>
-                </div>
-                <div className="catalog-sidebar-list">
-                  {opening.traps.map((trap) => {
-                    const isActive = trap.id === selectedTrapId;
-
-                    return (
-                      <button
-                        key={trap.id}
-                        type="button"
-                        className={`catalog-sidebar-item ${isActive ? 'active' : ''}`}
-                        aria-pressed={isActive}
-                        onClick={() => {
-                          setSelectedTrapId(trap.id);
-                        }}
-                      >
-                        <span className="catalog-sidebar-item-title">{trap.title}</span>
-                        <span className="catalog-sidebar-item-meta">{trap.difficulty}</span>
-                      </button>
-                    );
-                  })}
-                </div>
-              </section>
-            ))}
+          <div className="trap-toolbar-actions">
+            <Link href={`/practice/${selectedTrap.id}`} className="action-button compact-button">
+              Practice
+            </Link>
+            <Link href={`/tour/${selectedTrap.id}`} className="action-button secondary compact-button">
+              Tour
+            </Link>
+            <Link href={`/watch/${selectedTrap.id}`} className="action-button secondary compact-button">
+              Watch
+            </Link>
           </div>
+        </div>
+      ) : null}
 
-          <Link href="/openings" className="action-button secondary" style={{ marginTop: 20, alignSelf: 'flex-start' }}>
-            View curriculum map
-          </Link>
+      {/* Main workspace: left nav + board + practice sidebar */}
+      <div className="traps-layout">
+        {/* Left: trap list navigation only */}
+        <aside className="traps-nav">
+          {trapGroups.map((opening) => (
+            <section key={opening.id} className="traps-nav-group">
+              <div className="traps-nav-group-title">{opening.name}</div>
+              {opening.traps.map((trap) => {
+                const isActive = trap.id === selectedTrapId;
+
+                return (
+                  <button
+                    key={trap.id}
+                    type="button"
+                    className={`traps-nav-item ${isActive ? 'active' : ''}`}
+                    aria-pressed={isActive}
+                    onClick={() => {
+                      setSelectedTrapId(trap.id);
+                    }}
+                  >
+                    {trap.title}
+                    {isActive ? <span className="traps-nav-dot" /> : null}
+                  </button>
+                );
+              })}
+            </section>
+          ))}
         </aside>
 
-        <div className="catalog-main">
-          {trapError ? (
-            <section className="panel-card" style={{ background: '#f8e1db', color: '#702d22' }}>
-              {trapError}
-            </section>
-          ) : selectedTrap ? (
-            <>
-              <section className="catalog-overview panel-card">
-                <div className="eyebrow">Overview</div>
-                <h2 style={{ fontSize: '3rem', margin: '12px 0 12px' }}>{selectedTrap.title}</h2>
-                <p className="muted-copy" style={{ lineHeight: 1.6, maxWidth: 760 }}>
-                  {selectedTrapSummary?.opening ?? selectedTrap.opening.name} trap overview with direct study,
-                  practice, tour, and watch actions.
-                </p>
-                <div className="pill-row" style={{ marginTop: 16 }}>
-                  <span className="soft-pill">{selectedTrap.opening.name}</span>
-                  <span className="soft-pill">{selectedTrap.difficulty}</span>
-                  <span className="soft-pill">{selectedTrap.estimatedMinutes} min</span>
-                  <span className="soft-pill">{selectedTrap.engineEvaluation}</span>
-                </div>
-              </section>
-
-              <section className="split-grid">
-                <article className="panel-card">
-                  <div className="eyebrow">Selected trap</div>
-                  <h3 style={{ fontSize: '2rem', margin: '12px 0 12px' }}>{selectedTrap.title}</h3>
-                  <p className="muted-copy" style={{ lineHeight: 1.7 }}>{selectedTrap.summary}</p>
-                  <p className="muted-copy" style={{ lineHeight: 1.6, marginTop: 18, marginBottom: 0 }}>
-                    {selectedTrap.whenItWorks}
-                  </p>
-                </article>
-
-                <aside className="panel-card">
-                  <div className="eyebrow">Hands-on</div>
-                  <h3 style={{ margin: '12px 0 10px' }}>Practice space for this trap</h3>
-                  <p className="muted-copy" style={{ lineHeight: 1.6 }}>
-                    Move from reading into action immediately. Open the animated walkthrough, guided tour,
-                    or hands-on practice for the selected trap.
-                  </p>
-                  <div className="action-row" style={{ marginTop: 18 }}>
-                    <Link href={`/practice/${selectedTrap.id}`} className="action-button">
-                      Practice
-                    </Link>
-                    <Link href={`/tour/${selectedTrap.id}`} className="action-button secondary">
-                      Tour
-                    </Link>
-                    <Link href={`/watch/${selectedTrap.id}`} className="action-button secondary">
-                      Watch
-                    </Link>
-                    <Link href={`/traps/${selectedTrap.id}`} className="action-button secondary">
-                      Full detail
-                    </Link>
-                  </div>
-                  <div className="eyebrow" style={{ marginTop: 20 }}>Winning continuation</div>
-                  <div className="move-sequence" style={{ marginTop: 12 }}>
-                    {selectedTrap.winningContinuation.map((move) => (
-                      <span key={move} className="move-chip">
-                        {move}
-                      </span>
-                    ))}
-                  </div>
-                </aside>
-              </section>
-
-              <section className="card-grid">
-                {[
-                  ['Overview', selectedTrap.overview],
-                  ['Idea', selectedTrap.idea],
-                  ['When it works', selectedTrap.whenItWorks],
-                  ['Warning', selectedTrap.warning],
-                ].map(([title, content]) => (
-                  <article key={title} className="panel-card" style={{ padding: 18 }}>
-                    <div className="eyebrow">{title}</div>
-                    <p className="muted-copy" style={{ lineHeight: 1.6, marginBottom: 0 }}>
-                      {content}
-                    </p>
-                  </article>
-                ))}
-              </section>
-
-              <section className="panel-card">
-                <div className="eyebrow">Common mistakes</div>
-                <ul style={{ paddingLeft: 18, lineHeight: 1.7, marginBottom: 0 }}>
-                  {selectedTrap.commonMistakes.map((mistake) => (
-                    <li key={mistake}>{mistake}</li>
-                  ))}
-                </ul>
-                <div className="pill-row" style={{ marginTop: 18 }}>
-                  {selectedTrap.tacticalMotifs.map((motif) => (
-                    <span key={motif} className="tag-chip">
-                      {motif}
-                    </span>
-                  ))}
-                </div>
-              </section>
-
-              <section>
-                <div className="panel-card">
-                  <div className="eyebrow">Hands-on board</div>
-                  <h3 style={{ margin: '12px 0 10px' }}>Practice this trap without leaving the catalog.</h3>
-                  <p className="muted-copy" style={{ lineHeight: 1.6, marginBottom: 0 }}>
-                    This uses the same backend-validated training flow as the dedicated practice route,
-                    so you can start drilling the selected trap directly from this page.
-                  </p>
-                </div>
-
-                <div style={{ marginTop: 20 }}>
-                  {trainingError ? (
-                    <section className="panel-card" style={{ background: '#f8e1db', color: '#702d22' }}>
-                      {trainingError}
-                    </section>
-                  ) : selectedTraining ? (
-                    <GuidedTrainer
-                      key={selectedTrap.id}
-                      trapId={selectedTrap.id}
-                      mode="practice"
-                      turns={selectedTraining.practice.turns}
-                    />
-                  ) : (
-                    <section className="panel-card">Loading hands-on trainer...</section>
-                  )}
-                </div>
-              </section>
-            </>
+        {/* Center + Right: Board and practice instructions (GuidedTrainer owns both) */}
+        <div className="traps-workspace">
+          {trapError || trainingError ? (
+            <div className="traps-error">{trapError ?? trainingError}</div>
+          ) : selectedTrap && selectedTraining ? (
+            <GuidedTrainer
+              key={selectedTrap.id}
+              trapId={selectedTrap.id}
+              mode="practice"
+              turns={selectedTraining.practice.turns}
+            />
           ) : (
-            <section className="panel-card">Loading trap details...</section>
+            <div className="traps-loading">Loading board...</div>
           )}
         </div>
-      </section>
+      </div>
+
+      {/* Below board: secondary trap details */}
+      {selectedTrap ? (
+        <section className="trap-details">
+          <div className="trap-details-header">
+            <div className="eyebrow">Trap details</div>
+            <h2 className="trap-details-title">{selectedTrap.title}</h2>
+            <p className="trap-details-meta">
+              {selectedTrap.opening.name} &middot; {selectedTrap.difficulty} &middot; {selectedTrap.engineEvaluation}
+            </p>
+          </div>
+
+          <div className="trap-details-grid">
+            <div className="trap-details-section">
+              <div className="eyebrow">Summary</div>
+              <p>{selectedTrap.summary}</p>
+            </div>
+
+            <div className="trap-details-section">
+              <div className="eyebrow">Winning line</div>
+              <div className="move-sequence">
+                {selectedTrap.winningContinuation.map((move) => (
+                  <span key={move} className="move-chip">{move}</span>
+                ))}
+              </div>
+            </div>
+
+            <div className="trap-details-section">
+              <div className="eyebrow">When it works</div>
+              <p>{selectedTrap.whenItWorks}</p>
+            </div>
+
+            <div className="trap-details-section">
+              <div className="eyebrow">Common mistakes</div>
+              <ul>
+                {selectedTrap.commonMistakes.map((mistake) => (
+                  <li key={mistake}>{mistake}</li>
+                ))}
+              </ul>
+            </div>
+
+            <div className="trap-details-section">
+              <div className="eyebrow">Motifs</div>
+              <div className="pill-row">
+                {selectedTrap.tacticalMotifs.map((motif) => (
+                  <span key={motif} className="tag-chip">{motif}</span>
+                ))}
+              </div>
+            </div>
+
+            <div className="trap-details-section">
+              <div className="eyebrow">Idea</div>
+              <p>{selectedTrap.idea}</p>
+            </div>
+          </div>
+        </section>
+      ) : null}
     </main>
   );
 }
