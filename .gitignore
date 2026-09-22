@@ -8,6 +8,7 @@ pubspec.lock
 
 # Node
 node_modules/
+.next/
 dist/
 coverage/
 
