@@ -13,6 +13,7 @@
   "scripts": {
     "bootstrap:js": "npm install --workspaces",
     "validate:scaffold": "node scripts/validate-scaffold.mjs",
+    "dev": "concurrently \"npm run api:dev\" \"npm run web:dev\" \"npm run admin:dev\"",
     "api:dev": "npm --workspace apps/api run start:dev",
     "api:lint": "npm --workspace apps/api run lint",
     "api:test": "npm --workspace apps/api run test",
@@ -22,5 +23,8 @@
     "admin:lint": "npm --workspace apps/admin run lint",
     "admin:test": "npm --workspace apps/admin run test",
     "admin:build": "npm --workspace apps/admin run build"
+  },
+  "devDependencies": {
+    "concurrently": "^10.0.5"
   }
 }
