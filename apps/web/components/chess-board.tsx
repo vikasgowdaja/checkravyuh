@@ -1,70 +1,38 @@
 'use client';
 
-import type { BoardFrame, BoardPiece } from '../lib/api';
+import dynamic from 'next/dynamic';
 
-const files = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'] as const;
-const ranks = [8, 7, 6, 5, 4, 3, 2, 1] as const;
+import type { BoardFrame } from '../lib/api';
+import { getDisplayFiles, getDisplayRanks, type BoardOrientation } from '../lib/board-view';
 
-const pieceGlyphs: Record<BoardPiece['color'], Record<BoardPiece['kind'], string>> = {
-  white: {
-    king: '♔',
-    queen: '♕',
-    rook: '♖',
-    bishop: '♗',
-    knight: '♘',
-    pawn: '♙',
-  },
-  black: {
-    king: '♚',
-    queen: '♛',
-    rook: '♜',
-    bishop: '♝',
-    knight: '♞',
-    pawn: '♟',
-  },
-};
-
-function squareToBoardPosition(square: string, orientation: 'white' | 'black') {
-  const file = square[0];
-  const rank = Number(square[1]);
-  const fileIndex = files.indexOf(file as (typeof files)[number]);
-
-  if (orientation === 'black') {
-    return {
-      x: 7 - fileIndex,
-      y: rank - 1,
-    };
+const BoardScene3D = dynamic(
+  () => import('./board-scene-3d').then((module) => module.BoardScene3D),
+  {
+    ssr: false,
+    loading: () => <div className="board-canvas board-canvas-fallback" aria-hidden="true" />,
   }
-
-  return {
-    x: fileIndex,
-    y: 8 - rank,
-  };
-}
+);
 
 export function ChessBoard({
   frame,
   orientation = 'white',
 }: {
   frame: BoardFrame;
-  orientation?: 'white' | 'black';
+  orientation?: BoardOrientation;
 }) {
-  const displayFiles = orientation === 'black' ? [...files].reverse() : [...files];
-  const displayRanks = orientation === 'black' ? [...ranks].reverse() : [...ranks];
+  const displayFiles = getDisplayFiles(orientation);
+  const displayRanks = getDisplayRanks(orientation);
 
   return (
     <div className="board-panel">
-      <div className="board-grid">
-        <div className="board-squares">
+      <div className="board-grid board-grid-3d">
+        <BoardScene3D frame={frame} orientation={orientation} />
+
+        <div className="board-label-grid" aria-hidden="true">
           {displayRanks.flatMap((rank, rankIndex) =>
             displayFiles.map((file, fileIndex) => {
-              const isLightSquare = (files.indexOf(file) + (8 - rank)) % 2 === 0;
-
               return (
-                <div
-                  key={`${file}-${rank}`}
-                  className={`board-square ${isLightSquare ? 'light' : 'dark'}`}
-                >
+                <div key={`${file}-${rank}`} className="board-label-cell">
                   {fileIndex === 0 ? <span className="board-rank-label">{rank}</span> : null}
                   {rankIndex === displayRanks.length - 1 ? <span className="board-file-label">{file}</span> : null}
                 </div>
@@ -72,32 +40,6 @@ export function ChessBoard({
             })
           )}
         </div>
-
-        {(frame.highlightSquares ?? []).map((square) => {
-          const { x, y } = squareToBoardPosition(square, orientation);
-
-          return (
-            <div
-              key={square}
-              className="board-highlight"
-              style={{ transform: `translate(${x * 100}%, ${y * 100}%)` }}
-            />
-          );
-        })}
-
-        {frame.pieces.map((piece) => {
-          const { x, y } = squareToBoardPosition(piece.square, orientation);
-
-          return (
-            <div
-              key={piece.id}
-              className={`board-piece ${piece.color}`}
-              style={{ transform: `translate(${x * 100}%, ${y * 100}%)` }}
-            >
-              {pieceGlyphs[piece.color][piece.kind]}
-            </div>
-          );
-        })}
       </div>
     </div>
   );

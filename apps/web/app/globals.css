@@ -390,6 +390,64 @@ body {
   border: 1px solid rgba(29, 24, 18, 0.14);
 }
 
+.board-grid.board-grid-3d {
+  background:
+    radial-gradient(circle at top, rgba(255, 255, 255, 0.2), transparent 46%),
+    linear-gradient(180deg, #3e281b, #1c130f 78%);
+}
+
+.board-grid.board-grid-3d::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.08), transparent 24%, rgba(0, 0, 0, 0.18));
+  pointer-events: none;
+  z-index: 1;
+}
+
+.board-canvas,
+.board-label-grid,
+.board-squares-overlay {
+  position: absolute;
+  inset: 0;
+}
+
+.board-canvas {
+  z-index: 0;
+}
+
+.board-canvas canvas {
+  width: 100% !important;
+  height: 100% !important;
+  pointer-events: none;
+}
+
+.board-canvas-fallback {
+  background:
+    radial-gradient(circle at 20% 10%, rgba(255, 255, 255, 0.18), transparent 34%),
+    linear-gradient(180deg, #6f472c, #1e140f 72%);
+}
+
+.board-label-grid,
+.board-squares-overlay {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  grid-template-rows: repeat(8, 1fr);
+}
+
+.board-label-grid {
+  z-index: 2;
+  pointer-events: none;
+}
+
+.board-label-cell {
+  position: relative;
+}
+
+.board-squares-overlay {
+  z-index: 3;
+}
+
 .board-squares {
   display: grid;
   grid-template-columns: repeat(8, 1fr);
@@ -466,14 +524,6 @@ body {
   background: transparent;
 }
 
-.board-cell.light {
-  background: #f2dcc2;
-}
-
-.board-cell.dark {
-  background: #b67643;
-}
-
 .board-cell.history::after,
 .board-cell.selected::after {
   content: '';
@@ -484,12 +534,12 @@ body {
 }
 
 .board-cell.history::after {
-  background: rgba(255, 255, 255, 0.12);
-  border: 2px solid rgba(255, 255, 255, 0.28);
+  background: rgba(255, 255, 255, 0.08);
+  border: 2px solid rgba(255, 239, 214, 0.42);
 }
 
 .board-cell.selected::after {
-  border: 3px solid rgba(29, 24, 18, 0.72);
+  border: 3px solid rgba(255, 247, 234, 0.72);
 }
 
 .board-cell.drag-source {
@@ -501,7 +551,8 @@ body {
   width: 18px;
   height: 18px;
   border-radius: 50%;
-  background: rgba(29, 24, 18, 0.38);
+  background: rgba(255, 247, 234, 0.68);
+  box-shadow: 0 0 0 5px rgba(29, 24, 18, 0.14);
   pointer-events: none;
 }
 
@@ -510,7 +561,20 @@ body {
   height: calc(100% - 12px);
   border-radius: 18px;
   background: transparent;
-  border: 4px solid rgba(29, 24, 18, 0.35);
+  border: 4px solid rgba(255, 247, 234, 0.64);
+  box-shadow: none;
+}
+
+.board-drag-handle {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  opacity: 0;
+  cursor: grab;
+}
+
+.board-drag-handle:active {
+  cursor: grabbing;
 }
 
 .board-piece-glyph {
@@ -548,6 +612,8 @@ body {
   font-weight: 700;
   opacity: 0.72;
   pointer-events: none;
+  color: rgba(255, 247, 234, 0.86);
+  text-shadow: 0 1px 2px rgba(12, 7, 4, 0.35);
 }
 
 .board-rank-label {

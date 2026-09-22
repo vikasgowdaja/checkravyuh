@@ -1,35 +1,23 @@
 'use client';
 
+import dynamic from 'next/dynamic';
 import { useMemo, useState } from 'react';
 
-import type { BoardFrame, BoardPiece } from '../lib/api';
-
-const files = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'] as const;
-const ranks = [8, 7, 6, 5, 4, 3, 2, 1] as const;
-
-const pieceGlyphs: Record<BoardPiece['color'], Record<BoardPiece['kind'], string>> = {
-  white: {
-    king: '♔',
-    queen: '♕',
-    rook: '♖',
-    bishop: '♗',
-    knight: '♘',
-    pawn: '♙',
-  },
-  black: {
-    king: '♚',
-    queen: '♛',
-    rook: '♜',
-    bishop: '♝',
-    knight: '♞',
-    pawn: '♟',
-  },
-};
+import type { BoardFrame } from '../lib/api';
+import { getDisplayFiles, getDisplayRanks, type BoardOrientation } from '../lib/board-view';
 
 type LegalTarget = {
   to: string;
   isCapture: boolean;
 };
+
+const BoardScene3D = dynamic(
+  () => import('./board-scene-3d').then((module) => module.BoardScene3D),
+  {
+    ssr: false,
+    loading: () => <div className="board-canvas board-canvas-fallback" aria-hidden="true" />,
+  }
+);
 
 export function InteractiveChessBoard({
   frame,
@@ -43,7 +31,7 @@ export function InteractiveChessBoard({
 }: {
   frame: BoardFrame;
   activeColor: 'white' | 'black';
-  orientation?: 'white' | 'black';
+  orientation?: BoardOrientation;
   selectedSquare: string | null;
   legalTargets: LegalTarget[];
   disabled?: boolean;
@@ -61,18 +49,24 @@ export function InteractiveChessBoard({
   const captureTargetSet = new Set(
     legalTargets.filter((target) => target.isCapture).map((target) => target.to)
   );
-  const displayFiles = orientation === 'black' ? [...files].reverse() : [...files];
-  const displayRanks = orientation === 'black' ? [...ranks].reverse() : [...ranks];
+  const displayFiles = getDisplayFiles(orientation);
+  const displayRanks = getDisplayRanks(orientation);
 
   return (
     <div className="board-panel">
-      <div className="board-grid interactive">
-        <div className="board-squares interactive">
+      <div className="board-grid board-grid-3d interactive">
+        <BoardScene3D
+          frame={frame}
+          orientation={orientation}
+          selectedSquare={selectedSquare}
+          legalTargets={legalTargets}
+        />
+
+        <div className="board-squares board-squares-overlay interactive">
           {displayRanks.flatMap((rank, rankIndex) =>
             displayFiles.map((file, fileIndex) => {
               const square = `${file}${rank}`;
               const piece = pieceBySquare.get(square);
-              const isLightSquare = (files.indexOf(file) + (8 - rank)) % 2 === 0;
               const isSelected = selectedSquare === square;
               const isLegalTarget = legalTargetSet.has(square);
               const isCaptureTarget = captureTargetSet.has(square);
@@ -85,7 +79,6 @@ export function InteractiveChessBoard({
                   type="button"
                   className={[
                     'board-cell',
-                    isLightSquare ? 'light' : 'dark',
                     isSelected ? 'selected' : '',
                     isHighlighted ? 'history' : '',
                     draggedSquare === square ? 'drag-source' : '',
@@ -116,16 +109,12 @@ export function InteractiveChessBoard({
                     <span className={`board-target ${isCaptureTarget ? 'capture' : ''}`} />
                   ) : null}
 
-                  {piece ? (
+                  {piece && isOwnPiece && !disabled ? (
                     <span
-                      className={`board-piece-glyph ${piece.color} ${isOwnPiece && !disabled ? 'interactive' : ''}`}
-                      draggable={Boolean(isOwnPiece && !disabled)}
+                      className="board-drag-handle"
+                      draggable
+                      aria-hidden="true"
                       onDragStart={(event) => {
-                        if (!isOwnPiece || disabled) {
-                          event.preventDefault();
-                          return;
-                        }
-
                         event.dataTransfer.setData('text/plain', square);
                         event.dataTransfer.effectAllowed = 'move';
                         setDraggedSquare(square);
@@ -134,9 +123,7 @@ export function InteractiveChessBoard({
                       onDragEnd={() => {
                         setDraggedSquare(null);
                       }}
-                    >
-                      {pieceGlyphs[piece.color][piece.kind]}
-                    </span>
+                    />
                   ) : null}
 
                   {fileIndex === 0 ? <span className="board-rank-label">{rank}</span> : null}
