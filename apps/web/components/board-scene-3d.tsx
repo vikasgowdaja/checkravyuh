@@ -1,6 +1,7 @@
 'use client';
 
 import { RoundedBox } from '@react-three/drei';
+import { OrbitControls } from '@react-three/drei';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { useEffect, useMemo, useRef } from 'react';
 import * as THREE from 'three';
@@ -279,20 +280,32 @@ export function BoardScene3D({
   orientation = 'white',
   selectedSquare = null,
   legalTargets = [],
+  cameraLocked = true,
 }: {
   frame: BoardFrame;
   orientation?: BoardOrientation;
   selectedSquare?: string | null;
   legalTargets?: LegalTarget[];
+  cameraLocked?: boolean;
 }) {
   return (
     <div className="board-canvas" aria-hidden="true">
       <Canvas
-        camera={{ position: [6.5, 7.6, 6.5], fov: 34 }}
+        camera={{ position: [8.8, 9.6, 8.8], fov: 44, near: 0.1, far: 80 }}
         dpr={[1, 2]}
         gl={{ antialias: true, alpha: true }}
         shadows
       >
+        <OrbitControls
+          enabled={!cameraLocked}
+          enablePan={false}
+          enableDamping
+          dampingFactor={0.08}
+          minDistance={8}
+          maxDistance={16}
+          minPolarAngle={Math.PI / 5}
+          maxPolarAngle={Math.PI / 2.05}
+        />
         <BoardScene
           frame={frame}
           orientation={orientation}

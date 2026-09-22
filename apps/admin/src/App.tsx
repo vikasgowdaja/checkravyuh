@@ -106,6 +106,11 @@ export function App() {
           }}
         >
           <div style={{ maxWidth: 760 }}>
+            <img
+              src="/checkravyuh-logo.png"
+              alt="Checkravyuh"
+              style={{ width: 220, maxWidth: '100%', height: 'auto', display: 'block', marginBottom: 12 }}
+            />
             <h1 style={{ fontSize: '3rem', margin: '8px 0 12px' }}>{appTitle}</h1>
             <p style={{ lineHeight: 1.6, fontSize: '1.05rem', margin: 0 }}>
               The admin shell is now connected to the same backend that the Android and future

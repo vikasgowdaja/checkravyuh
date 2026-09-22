@@ -55,3 +55,16 @@ test('buildAnnotatedPgn appends glyph and comments without mutating SAN', () => 
   assert.ok(exported.includes('{Strong central space gain}'));
   assert.ok(exported.includes('[Result "1-0"]'));
 });
+
+test('parsePgnToAnalysisGame uses PGN history base when provided startingFen is midline', () => {
+  const game = parsePgnToAnalysisGame({
+    gameId: 'blackburne',
+    pgn: '1. e4 e5 2. Nf3 Nc6 3. Bc4 Nd4 4. Nxe5 Qg5',
+    startingFen: 'r1bqkbnr/pppp1ppp/2n5/4p3/2B1P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 2 4',
+  });
+
+  assert.equal(game.moves[0].san, 'e4');
+  assert.equal(game.moves[0].from, 'e2');
+  assert.equal(game.moves[0].to, 'e4');
+  assert.ok(game.initialFen.startsWith('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR'));
+});

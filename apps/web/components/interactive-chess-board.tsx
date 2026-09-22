@@ -61,6 +61,7 @@ export function InteractiveChessBoard({
   onMoveAttempt: (from: string, to: string) => void;
 }) {
   const [draggedSquare, setDraggedSquare] = useState<string | null>(null);
+  const [cameraLocked, setCameraLocked] = useState(true);
 
   const pieceBySquare = useMemo(
     () => new Map(frame.pieces.map((piece) => [piece.square, piece])),
@@ -170,9 +171,29 @@ export function InteractiveChessBoard({
           orientation={orientation}
           selectedSquare={selectedSquare}
           legalTargets={legalTargets}
+          cameraLocked={cameraLocked}
         />
 
-        <div className="board-squares board-squares-overlay interactive">
+        <button
+          type="button"
+          className="board-camera-toggle action-button secondary compact-button"
+          onClick={() => {
+            setCameraLocked((value) => !value);
+          }}
+        >
+          {cameraLocked ? 'Unlock camera' : 'Lock camera'}
+        </button>
+
+        <div
+          className={[
+            'board-squares',
+            'board-squares-overlay',
+            'interactive',
+            !cameraLocked ? 'camera-unlocked' : '',
+          ]
+            .filter(Boolean)
+            .join(' ')}
+        >
           {displayRanks.flatMap((rank, rankIndex) =>
             displayFiles.map((file, fileIndex) => {
               const square = `${file}${rank}`;

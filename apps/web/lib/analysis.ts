@@ -145,19 +145,30 @@ export function parsePgnToAnalysisGame({
   headers?: Partial<AnalysisHeaders>;
 }): AnalysisGame {
   const initialBoard = startingFen ? new Chess(startingFen) : new Chess();
-  const initialFen = initialBoard.fen();
+  const requestedInitialFen = initialBoard.fen();
 
-  const loader = new Chess(initialFen);
+  const loader = new Chess(requestedInitialFen);
   loader.loadPgn(pgn, { strict: false });
 
   const history = loader.history({ verbose: true }) as Move[];
+  const initialFen = history[0]?.before ?? requestedInitialFen;
   const replay = new Chess(initialFen);
   const positions = [initialFen];
   const moves: AnalysisMoveNode[] = [];
 
   history.forEach((verboseMove, index) => {
-    replay.move(verboseMove);
-    const fenAfter = replay.fen();
+    const appliedMove = replay.move({
+      from: verboseMove.from,
+      to: verboseMove.to,
+      promotion: verboseMove.promotion,
+    });
+
+    const fenAfter = appliedMove?.after ?? verboseMove.after ?? replay.fen();
+
+    if (!appliedMove && verboseMove.after) {
+      replay.load(verboseMove.after);
+    }
+
     const moveId = `${gameId}-m${index + 1}`;
 
     moves.push({

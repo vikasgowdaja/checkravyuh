@@ -1,6 +1,7 @@
 'use client';
 
 import dynamic from 'next/dynamic';
+import { useState } from 'react';
 
 import type { BoardFrame, BoardPiece } from '../lib/api';
 import type { BoardRenderMode } from '../lib/board-render-mode';
@@ -47,6 +48,7 @@ export function ChessBoard({
   orientation?: BoardOrientation;
   renderMode?: BoardRenderMode;
 }) {
+  const [cameraLocked, setCameraLocked] = useState(true);
   const displayFiles = getDisplayFiles(orientation);
   const displayRanks = getDisplayRanks(orientation);
 
@@ -105,7 +107,17 @@ export function ChessBoard({
   return (
     <div className="board-panel">
       <div className="board-grid board-grid-3d">
-        <BoardScene3D frame={frame} orientation={orientation} />
+        <BoardScene3D frame={frame} orientation={orientation} cameraLocked={cameraLocked} />
+
+        <button
+          type="button"
+          className="board-camera-toggle action-button secondary compact-button"
+          onClick={() => {
+            setCameraLocked((value) => !value);
+          }}
+        >
+          {cameraLocked ? 'Unlock camera' : 'Lock camera'}
+        </button>
 
         <div className="board-label-grid" aria-hidden="true">
           {displayRanks.flatMap((rank, rankIndex) =>
