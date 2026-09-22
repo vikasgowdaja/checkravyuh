@@ -12,8 +12,11 @@ import {
   type ReviewResponse,
 } from '../lib/api';
 import { buildCurriculumSections } from '../lib/curriculum-groups';
+import { useBoardRenderMode } from '../lib/board-render-mode';
+import { BoardRenderModeToggle } from '../components/board-render-mode-toggle';
 
 export default function Page() {
+  const { mode: boardRenderMode, setMode: setBoardRenderMode } = useBoardRenderMode();
   const [apiStatus, setApiStatus] = useState<ApiStatus | null>(null);
   const [catalogPreview, setCatalogPreview] = useState<CatalogPreview | null>(null);
   const [openings, setOpenings] = useState<OpeningSummary[]>([]);
@@ -82,6 +85,17 @@ export default function Page() {
             <Link href={`/tour/${featuredTrapId}`} className="action-button secondary">
               Start guided tour
             </Link>
+          </div>
+
+          <div className="panel-card" style={{ marginTop: 20, padding: 16 }}>
+            <div className="eyebrow">Board view</div>
+            <p className="muted-copy" style={{ margin: '10px 0 12px' }}>
+              If 3D blocks learning flow or device performance, switch to 2D instantly.
+            </p>
+            <BoardRenderModeToggle
+              mode={boardRenderMode}
+              onChange={setBoardRenderMode}
+            />
           </div>
         </div>
 

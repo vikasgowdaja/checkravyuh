@@ -4,9 +4,11 @@ import { type Move, type Square } from 'chess.js';
 import Link from 'next/link';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
+import { BoardRenderModeToggle } from './board-render-mode-toggle';
 import { InteractiveChessBoard } from './interactive-chess-board';
 import { createChessFromFrame } from '../lib/chess-position';
 import { postJson, type BoardFrame, type GuidedTurn, type MoveValidationResponse } from '../lib/api';
+import { useBoardRenderMode } from '../lib/board-render-mode';
 
 type FeedbackState =
   | {
@@ -60,6 +62,7 @@ export function GuidedTrainer({
   mode: 'tour' | 'practice';
   turns: GuidedTurn[];
 }) {
+  const { mode: boardRenderMode, setMode: setBoardRenderMode } = useBoardRenderMode();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [displayFrame, setDisplayFrame] = useState<BoardFrame | null>(turns[0]?.boardBefore ?? null);
   const [feedback, setFeedback] = useState<FeedbackState | null>(null);
@@ -365,6 +368,7 @@ export function GuidedTrainer({
         frame={displayFrame}
         activeColor="black"
         orientation={boardOrientation}
+        renderMode={boardRenderMode}
         selectedSquare={selectedSquare}
         legalTargets={legalTargets}
         disabled={interactionDisabled}
@@ -386,6 +390,11 @@ export function GuidedTrainer({
             </span>
             <span className="soft-pill">Completed {completedTurns}</span>
             {engineStatus ? <span className="soft-pill">{engineStatus}</span> : null}
+            <BoardRenderModeToggle
+              mode={boardRenderMode}
+              onChange={setBoardRenderMode}
+              compact
+            />
             <button
               className="action-button secondary compact-button"
               onClick={() => {
@@ -402,6 +411,9 @@ export function GuidedTrainer({
           </p>
           <p className="muted-copy" style={{ marginTop: 12, marginBottom: 0 }}>
             Black is shown from the learner side by default, and White&apos;s scripted reply advances automatically after a correct move.
+          </p>
+          <p className="muted-copy" style={{ marginTop: 12, marginBottom: 0 }}>
+            3D piece motion is visual only for now. Physics and advanced interactions can be layered in later.
           </p>
 
           {promotionChoice ? (

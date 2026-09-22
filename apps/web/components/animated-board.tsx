@@ -3,9 +3,12 @@
 import { useEffect, useMemo, useState } from 'react';
 
 import { ChessBoard } from './chess-board';
+import { BoardRenderModeToggle } from './board-render-mode-toggle';
 import type { BoardFrame } from '../lib/api';
+import { useBoardRenderMode } from '../lib/board-render-mode';
 
 export function AnimatedBoard({ frames }: { frames: BoardFrame[] }) {
+  const { mode: boardRenderMode, setMode: setBoardRenderMode } = useBoardRenderMode();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [boardOrientation, setBoardOrientation] = useState<'white' | 'black'>('black');
@@ -50,7 +53,7 @@ export function AnimatedBoard({ frames }: { frames: BoardFrame[] }) {
 
   return (
     <section className="practice-layout">
-      <ChessBoard frame={currentFrame} orientation={boardOrientation} />
+      <ChessBoard frame={currentFrame} orientation={boardOrientation} renderMode={boardRenderMode} />
 
       <div className="practice-sidebar">
         <div className="panel-card">
@@ -60,6 +63,11 @@ export function AnimatedBoard({ frames }: { frames: BoardFrame[] }) {
           <div className="pill-row" style={{ marginTop: 18 }}>
             <span className="soft-pill">{currentFrame.movePlayed ?? 'Position setup'}</span>
             <span className="soft-pill">Frame {currentIndex + 1} / {frames.length}</span>
+            <BoardRenderModeToggle
+              mode={boardRenderMode}
+              onChange={setBoardRenderMode}
+              compact
+            />
             <button
               className="action-button secondary compact-button"
               onClick={() => {

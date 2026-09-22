@@ -345,6 +345,37 @@ body {
   min-height: auto;
 }
 
+.board-mode-toggle {
+  display: inline-flex;
+  align-items: center;
+  background: rgba(255, 250, 242, 0.9);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 3px;
+  gap: 2px;
+}
+
+.board-mode-toggle.compact {
+  transform: scale(0.95);
+  transform-origin: center;
+}
+
+.board-mode-option {
+  border: none;
+  border-radius: 999px;
+  padding: 8px 12px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  color: var(--muted);
+  background: transparent;
+}
+
+.board-mode-option.active {
+  background: #1d1812;
+  color: #f8efe2;
+}
+
 .option-button {
   min-height: 52px;
 }
@@ -522,6 +553,14 @@ body {
   justify-content: center;
   cursor: pointer;
   background: transparent;
+}
+
+.board-cell.light {
+  background: #f2dcc2;
+}
+
+.board-cell.dark {
+  background: #b67643;
 }
 
 .board-cell.history::after,
