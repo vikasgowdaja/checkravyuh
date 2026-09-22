@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.1.0",
   "scripts": {
-    "dev": "node -e \"try{require('node:fs').rmSync('.next',{recursive:true,force:true})}catch(e){}\" && cross-env NEXT_DISABLE_WEBPACK_CACHE=1 next dev --port 3201",
+    "dev": "node -e \"try{const fs=require('node:fs');fs.rmSync('.next-dev',{recursive:true,force:true});fs.rmSync('.next',{recursive:true,force:true})}catch(e){}\" && cross-env NEXT_DISABLE_WEBPACK_CACHE=1 next dev --port 3201",
     "build": "next build",
     "start": "next start --port 3001",
     "test": "node --import tsx --test lib/**/*.test.ts"
