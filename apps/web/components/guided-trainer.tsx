@@ -476,6 +476,9 @@ export function GuidedTrainer({
                 <button className="action-button" onClick={handleReplay}>
                   Replay training
                 </button>
+                <Link href={`/analysis/${trapId}`} className="action-button secondary">
+                  Analysis board
+                </Link>
                 <Link href="/review" className="action-button secondary">
                   Review queue
                 </Link>

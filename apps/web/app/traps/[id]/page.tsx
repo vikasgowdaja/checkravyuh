@@ -72,6 +72,9 @@ export default function TrapPage() {
                 <Link href={`/practice/${trap.id}`} className="action-button">
                   Practice
                 </Link>
+                <Link href={`/analysis/${trap.id}`} className="action-button secondary">
+                  Analysis board
+                </Link>
                 <Link href="/traps" className="action-button secondary">
                   Back to traps
                 </Link>

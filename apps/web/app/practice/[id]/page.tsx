@@ -67,6 +67,9 @@ export default function PracticePage() {
               <Link href={`/tour/${trap.id}`} className="action-button secondary">
                 Guided tour
               </Link>
+              <Link href={`/analysis/${trap.id}`} className="action-button secondary">
+                Analysis board
+              </Link>
               <Link href={`/traps/${trap.id}`} className="action-button secondary">
                 Back to trap detail
               </Link>

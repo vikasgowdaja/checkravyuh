@@ -67,6 +67,9 @@ export default function WatchPage() {
               <Link href={`/practice/${trap.id}`} className="action-button secondary">
                 Practice yourself
               </Link>
+              <Link href={`/analysis/${trap.id}`} className="action-button secondary">
+                Analysis board
+              </Link>
               <Link href={`/traps/${trap.id}`} className="action-button secondary">
                 Back to overview
               </Link>

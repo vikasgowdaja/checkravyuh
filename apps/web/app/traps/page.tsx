@@ -180,6 +180,9 @@ export default function TrapsPage() {
             <Link href={`/watch/${selectedTrap.id}`} className="action-button secondary compact-button">
               Watch
             </Link>
+            <Link href={`/analysis/${selectedTrap.id}`} className="action-button secondary compact-button">
+              Analysis
+            </Link>
           </div>
         </div>
       ) : null}

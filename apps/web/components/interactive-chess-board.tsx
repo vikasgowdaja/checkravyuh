@@ -215,10 +215,6 @@ export function InteractiveChessBoard({
                   }}
                   aria-label={`${square}${piece ? ` ${piece.color} ${piece.kind}` : ''}`}
                 >
-                  {isLegalTarget ? (
-                    <span className={`board-target ${isCaptureTarget ? 'capture' : ''}`} />
-                  ) : null}
-
                   {piece && isOwnPiece && !disabled ? (
                     <span
                       className="board-drag-handle"

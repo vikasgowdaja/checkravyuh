@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.1.0",
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --port 3202 --strictPort",
     "build": "vite build",
     "lint": "eslint \"src/**/*.{ts,tsx}\"",
     "test": "vitest run"

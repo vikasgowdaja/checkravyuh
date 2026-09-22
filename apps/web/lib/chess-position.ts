@@ -123,3 +123,95 @@ export function boardFrameToFen(frame: BoardFrame, activeColor: 'white' | 'black
 export function createChessFromFrame(frame: BoardFrame, activeColor: 'white' | 'black') {
   return new Chess(boardFrameToFen(frame, activeColor));
 }
+
+export function fenToBoardFrame(
+  fen: string,
+  options?: {
+    id?: string;
+    label?: string;
+    prompt?: string;
+    narration?: string;
+    movePlayed?: string;
+    highlightSquares?: string[];
+  }
+): BoardFrame {
+  const [placement] = fen.split(' ');
+
+  if (!placement) {
+    throw new Error('Invalid FEN: board placement is missing.');
+  }
+
+  const rows = placement.split('/');
+
+  if (rows.length !== 8) {
+    throw new Error('Invalid FEN: board placement must contain 8 ranks.');
+  }
+
+  const pieces: BoardPiece[] = [];
+
+  rows.forEach((row, rankIndex) => {
+    let filePointer = 0;
+    const rank = 8 - rankIndex;
+
+    for (const symbol of row) {
+      const empty = Number(symbol);
+
+      if (!Number.isNaN(empty)) {
+        filePointer += empty;
+        continue;
+      }
+
+      const color: BoardPiece['color'] = symbol === symbol.toUpperCase() ? 'white' : 'black';
+      const normalized = symbol.toLowerCase();
+      const kind =
+        normalized === 'k'
+          ? 'king'
+          : normalized === 'q'
+            ? 'queen'
+            : normalized === 'r'
+              ? 'rook'
+              : normalized === 'b'
+                ? 'bishop'
+                : normalized === 'n'
+                  ? 'knight'
+                  : normalized === 'p'
+                    ? 'pawn'
+                    : null;
+
+      if (!kind) {
+        throw new Error(`Invalid FEN piece symbol: ${symbol}`);
+      }
+
+      const file = files[filePointer];
+
+      if (!file) {
+        throw new Error('Invalid FEN: file overflow while parsing rank.');
+      }
+
+      const square = `${file}${rank}`;
+
+      pieces.push({
+        id: `${color}-${kind}-${square}`,
+        color,
+        kind,
+        square,
+      });
+
+      filePointer += 1;
+    }
+
+    if (filePointer !== 8) {
+      throw new Error('Invalid FEN: rank does not resolve to 8 files.');
+    }
+  });
+
+  return {
+    id: options?.id ?? `fen-${placement}`,
+    label: options?.label ?? 'Analysis position',
+    prompt: options?.prompt ?? 'Inspect the current position.',
+    movePlayed: options?.movePlayed,
+    narration: options?.narration ?? 'Navigate, annotate, and analyze this position.',
+    highlightSquares: options?.highlightSquares ?? [],
+    pieces,
+  };
+}

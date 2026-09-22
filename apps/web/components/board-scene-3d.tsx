@@ -77,39 +77,69 @@ function AnimatedPiece({
   const groupRef = useRef<THREE.Group>(null);
   const target = squareToWorldPosition(piece.square, orientation);
   const currentPositionRef = useRef(new THREE.Vector3(target.x, 0.14, target.z));
-  const startPositionRef = useRef(currentPositionRef.current.clone());
-  const endPositionRef = useRef(currentPositionRef.current.clone());
-  const progressRef = useRef(1);
+  const fromPositionRef = useRef(currentPositionRef.current.clone());
+  const toPositionRef = useRef(currentPositionRef.current.clone());
+  const animationStartRef = useRef(0);
+  const animationDurationRef = useRef(0.42);
+  const isAnimatingRef = useRef(false);
+  const selectedLiftRef = useRef(0);
+
+  function easeOutCubic(value: number) {
+    return 1 - Math.pow(1 - value, 3);
+  }
 
   useEffect(() => {
-    startPositionRef.current = currentPositionRef.current.clone();
-    endPositionRef.current = new THREE.Vector3(target.x, 0.14, target.z);
-    progressRef.current = 0;
+    const nextTarget = new THREE.Vector3(target.x, 0.14, target.z);
+    const distance = currentPositionRef.current.distanceTo(nextTarget);
+
+    fromPositionRef.current = currentPositionRef.current.clone();
+    toPositionRef.current = nextTarget;
+    animationStartRef.current = performance.now() / 1000;
+    animationDurationRef.current = Math.min(0.62, Math.max(0.24, 0.26 + distance * 0.06));
+    isAnimatingRef.current = distance > 0.001;
   }, [target.x, target.z]);
 
-  useFrame((_, delta) => {
+  useFrame(({ clock }, delta) => {
     const pieceGroup = groupRef.current;
 
     if (!pieceGroup) {
       return;
     }
 
-    progressRef.current = Math.min(1, progressRef.current + delta * 4.8);
-    const eased = 1 - Math.pow(1 - progressRef.current, 3);
+    if (isAnimatingRef.current) {
+      const elapsed = clock.elapsedTime - animationStartRef.current;
+      const rawProgress = Math.min(1, elapsed / animationDurationRef.current);
+      const easedProgress = easeOutCubic(rawProgress);
 
-    currentPositionRef.current.lerpVectors(
-      startPositionRef.current,
-      endPositionRef.current,
-      eased
-    );
+      currentPositionRef.current.lerpVectors(
+        fromPositionRef.current,
+        toPositionRef.current,
+        easedProgress
+      );
 
-    const distance = startPositionRef.current.distanceTo(endPositionRef.current);
-    const travelLift = distance > 0.01 ? Math.sin(Math.PI * eased) * Math.min(0.38, 0.14 + distance * 0.08) : 0;
-    const selectedLift = selected ? 0.08 : 0;
+      if (rawProgress >= 1) {
+        currentPositionRef.current.copy(toPositionRef.current);
+        isAnimatingRef.current = false;
+      }
+    }
+
+    const distance = fromPositionRef.current.distanceTo(toPositionRef.current);
+    const travelLift = isAnimatingRef.current
+      ? Math.sin(
+          Math.PI *
+            Math.min(
+              1,
+              (clock.elapsedTime - animationStartRef.current) / animationDurationRef.current
+            )
+        ) * Math.min(0.34, 0.12 + distance * 0.06)
+      : 0;
+
+    const selectedLiftTarget = selected ? 0.085 : 0;
+    selectedLiftRef.current = THREE.MathUtils.damp(selectedLiftRef.current, selectedLiftTarget, 12, delta);
 
     pieceGroup.position.set(
       currentPositionRef.current.x,
-      0.14 + travelLift + selectedLift,
+      0.14 + travelLift + selectedLiftRef.current,
       currentPositionRef.current.z
     );
   });
@@ -152,8 +182,8 @@ function BoardScene({
         castShadow
         intensity={1.85}
         position={[6, 11, 5]}
-        shadow-mapSize-width={2048}
-        shadow-mapSize-height={2048}
+        shadow-mapSize-width={1024}
+        shadow-mapSize-height={1024}
         shadow-bias={-0.00008}
       />
 
