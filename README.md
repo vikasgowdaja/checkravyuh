@@ -83,6 +83,7 @@ docs/
 - [Architecture](docs/architecture.md)
 - [Content Pipeline](docs/content-pipeline.md)
 - [Developer Environments](docs/development-environments.md)
+- [Single-Port Nginx Deployment](docs/deployment-single-port-nginx.md)
 - [Getting Started](docs/getting-started.md)
 - [Product Scope](docs/product-scope.md)
 - [ADR 0001: Foundation Stack](docs/decisions/0001-foundation-stack.md)

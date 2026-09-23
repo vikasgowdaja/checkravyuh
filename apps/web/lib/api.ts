@@ -162,7 +162,9 @@ export type ReviewResponse = {
   }>;
 };
 
-export const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://localhost:3200';
+const defaultApiBaseUrl = process.env.NODE_ENV === 'development' ? 'http://localhost:3200' : '/api';
+
+export const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL ?? defaultApiBaseUrl;
 export const featuredTrapId = 'blackburne_shilling';
 
 export async function fetchJson<T>(path: string): Promise<T> {

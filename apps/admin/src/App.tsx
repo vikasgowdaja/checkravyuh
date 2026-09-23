@@ -27,7 +27,8 @@ type CatalogPreview = {
   traps: CatalogTrap[];
 };
 
-const apiBaseUrl = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:3000';
+const defaultApiBaseUrl = import.meta.env.DEV ? 'http://localhost:3200' : '/api';
+const apiBaseUrl = import.meta.env.VITE_API_BASE_URL ?? defaultApiBaseUrl;
 
 const sectionLabels: Record<AppSection, string> = {
   overview: 'Overview',
