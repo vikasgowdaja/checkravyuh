@@ -26,7 +26,7 @@
     "admin:build": "npm --workspace apps/admin run build"
   },
   "devDependencies": {
-    "concurrently": "^10.0.5",
+    "concurrently": "^10.0.6",
     "kill-port": "^2.0.1"
   }
 }
